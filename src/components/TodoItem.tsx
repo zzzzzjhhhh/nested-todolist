@@ -35,7 +35,7 @@ const TodoItem: FC<Props> = observer((props) => {
   const [today, setToday] = useState<dayjs.Dayjs>();
   const onCheckChange = () => {
     store.toggleTodoDone(id);
-    store.todoList.forEach((todo) => store.check(todo.id));
+    // store.todoList.forEach((todo) => store.check(todo.id));
     store.saveAllTodos();
   };
   const isEditing = store.editingId === id;
@@ -49,13 +49,10 @@ const TodoItem: FC<Props> = observer((props) => {
     const now = dayjs();
     setToday(now);
   }, []);
-  console.log(dueDate);
 
   const dueDateObj = dayjs(dueDate, 'YYYY-MM-DD');
-  console.log(dueDateObj);
 
   const isOverDue = today && !today.isBefore(dueDateObj);
-  console.log(isOverDue);
 
   return (
     <div className="todoItem">

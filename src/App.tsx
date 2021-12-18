@@ -17,7 +17,6 @@ export interface Store {
   addSubTodos: (todoId: string, content: string, dueDate: string) => void;
   toggleTodoDone: (todoId: string | undefined, flag?: boolean) => void;
   toggleLoadMore: (todoId: string) => void;
-  check: (todoList: string) => void;
   filterDoneTodos: Todo[];
   filterUnDoneTodos: Todo[];
 }
@@ -79,26 +78,48 @@ const App: FC = () => {
       }
       store.saveAllTodos();
     },
-
-    check(todoId) {
-      const todoItem = store.findTodoById(todoId, store.todoList);
-      if (!todoItem) return;
-      if (todoItem.subTodos.length === 0) return;
-      const isAllSubTodosDone = todoItem.subTodos.every(
-        (item) => item.done === true
-      );
-      if (isAllSubTodosDone) {
-        todoItem.done = true;
-        return;
-      }
-      todoItem.done = false;
-      todoItem.subTodos.forEach((todo) => store.check(todo.id));
-    },
     toggleTodoDone(todoId, flag) {
       if (!todoId) return;
       const todoItem = store.findTodoById(todoId, store.todoList);
       if (!todoItem) return;
-      if (flag === undefined) todoItem.done = !todoItem.done;
+      if (flag === undefined) {
+        todoItem.done = !todoItem.done;
+        // when check a todo to undone, uncheck parent todo
+        if (todoItem.done === false) {
+          if (todoItem.parentTodoId) {
+            let pTodo = store.findTodoById(
+              todoItem.parentTodoId,
+              store.todoList
+            );
+            while (pTodo && pTodo.done === true) {
+              pTodo.done = false;
+              if (pTodo.parentTodoId) {
+                pTodo = store.findTodoById(pTodo.parentTodoId, store.todoList);
+              }
+            }
+          }
+        }
+        // when check a todo to done, if all siblings are done, check father to done
+        if (todoItem.done === true) {
+          if (todoItem.parentTodoId) {
+            let pTodo = store.findTodoById(
+              todoItem.parentTodoId,
+              store.todoList
+            );
+            while (
+              pTodo &&
+              pTodo.subTodos.every((todo) => todo.done === true)
+            ) {
+              pTodo.done = true;
+              if (!pTodo.parentTodoId) {
+                pTodo = undefined;
+              } else {
+                pTodo = store.findTodoById(pTodo.parentTodoId, store.todoList);
+              }
+            }
+          }
+        }
+      }
       if (typeof flag === 'boolean') todoItem.done = flag;
       todoItem.subTodos.forEach((item) => {
         store.toggleTodoDone(item.id, todoItem.done);
