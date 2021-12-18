@@ -1,0 +1,26 @@
+.todoItem > .mainItem {
+  display: flex;
+  align-items: center;
+}
+.todoItem > .todoList {
+  width: auto;
+  position: relative;
+  left: 46px;
+}
+.formIcon:hover {
+  color: blue;
+}
+.saveIcon:hover {
+  color: blue;
+  cursor: pointer;
+}
+.addIcon:hover {
+  color: blue;
+}
+.dueDateCard {
+  margin-left: 200px;
+  width: 1000px;
+}
+.overdue {
+  background: red;
+}
