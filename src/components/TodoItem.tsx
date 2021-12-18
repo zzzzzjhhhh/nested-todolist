@@ -49,8 +49,14 @@ const TodoItem: FC<Props> = observer((props) => {
     const now = dayjs();
     setToday(now);
   }, []);
+  console.log(dueDate);
+
   const dueDateObj = dayjs(dueDate, 'YYYY-MM-DD');
+  console.log(dueDateObj);
+
   const isOverDue = today && !today.isBefore(dueDateObj);
+  console.log(isOverDue);
+
   return (
     <div className="todoItem">
       <div className="mainItem">
@@ -120,19 +126,20 @@ const TodoItem: FC<Props> = observer((props) => {
             </>
           }
         />
-
-        <div className="dueDateCard">
-          {isOverDue && (
-            <Button
-              style={{ borderRadius: '6px', margin: '6px' }}
-              type="primary"
-              danger
-            >
-              Overdue
-            </Button>
-          )}
-          <span style={{ marginLeft: '10px' }}>{dueDate}</span>
-        </div>
+        {dueDate && (
+          <div className="dueDateCard">
+            {isOverDue && (
+              <Button
+                style={{ borderRadius: '6px', margin: '6px' }}
+                type="primary"
+                danger
+              >
+                Overdue
+              </Button>
+            )}
+            <span style={{ marginLeft: '10px' }}>{dueDate}</span>
+          </div>
+        )}
       </div>
       {subTodos.length > 0 && loadMore && <TodoList data={subTodos} />}
     </div>
